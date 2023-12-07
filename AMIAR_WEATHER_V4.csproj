@@ -101,5 +101,8 @@
   <ItemGroup>
     <Resource Include="Fond-Ecran.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="VILLE.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

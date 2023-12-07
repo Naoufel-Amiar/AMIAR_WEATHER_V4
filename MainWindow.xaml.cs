@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.IO.Packaging;
+using System.IO;
 
 
 
@@ -868,26 +869,27 @@ namespace AMIAR_WEATHER_V2
     public partial class MainWindow : Window
     {
         string ville = "Annecy";
-        public List<string> Cities { get; set; }
+        List<string> CitiesList;
+        string cheminFichier = "C:/Users/Naoufel/Downloads/AMIAR_WEATHER_V4/AMIAR_WEATHER_V4/VILLE.txt";
+
 
         public MainWindow()
         {
+            cheminFichier = System.IO.Path.Combine(Environment.CurrentDirectory, cheminFichier);
+
             InitializeComponent();
+
+            Closing += MainWindow_Closing;
+
 
         _: GetWeather(ville);
 
-            Cities = new List<string>
-            {
-                "Annecy", "Marseille", "Lille", "Lyon",
-                "Toulouse", "Clarafond-Arcine", "Angers",
-                "Bordeaux", "Strasbourg", "Nice", "Cannes",
-                "Calais", "Lorient", "Versailles", "Roubaix",
-                
+            //ATTENTION MARCHE AVEC CHEMIN ABSOLUE
+            CitiesList = new List<string>(File.ReadAllLines(cheminFichier));
 
-            };
 
             //Ajout des villes au ComboBox
-            foreach (var city in Cities)
+            foreach (var city in CitiesList)
             {
                 CityChoiceCB.Items.Add(city);
             }
@@ -994,7 +996,7 @@ namespace AMIAR_WEATHER_V2
             if (!string.IsNullOrEmpty(selectedCity))
             {
                 CityChoiceCB.Items.Remove(selectedCity);
-                Cities.Remove(villeASupprimer);
+                CitiesList.Remove(villeASupprimer);
 
                 // Vous pouvez également mettre à jour vos données de sauvegarde ici.
 
@@ -1006,7 +1008,7 @@ namespace AMIAR_WEATHER_V2
             // Ajoutez le texte de la TextBox à la collection Cities
             string nouvelleVille = TB_ADD_CITY.Text.Trim();
 
-            if (!string.IsNullOrEmpty(nouvelleVille) && !Cities.Contains(nouvelleVille))
+            if (!string.IsNullOrEmpty(nouvelleVille) && !CitiesList.Contains(nouvelleVille))
             {
                 CityChoiceCB.Items.Add(nouvelleVille);
 
@@ -1018,5 +1020,12 @@ namespace AMIAR_WEATHER_V2
                 MessageBox.Show("La ville est déjà dans la liste ou le champ est vide.");
             }
         }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Écrire le contenu de CitiesList dans le fichier texte
+            File.WriteAllLines(cheminFichier, CitiesList);
+        }
+
     }
 }
